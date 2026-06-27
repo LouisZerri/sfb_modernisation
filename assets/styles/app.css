@@ -18,4 +18,11 @@
     label[for] {
         cursor: pointer;
     }
+
+    /* Masque la croix native des champs de recherche (gérée par notre UI). */
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+    }
 }
