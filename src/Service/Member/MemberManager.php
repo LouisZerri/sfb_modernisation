@@ -10,6 +10,7 @@ use App\Entity\Representative;
 use App\Service\Search\MemberIndexer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Orchestre la création, la mise à jour et la suppression d'un adhérent
@@ -18,10 +19,14 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class MemberManager
 {
+    /** Clé du compteur d'adhérents mis en cache (partagée avec le contrôleur). */
+    public const COUNT_CACHE_KEY = 'members_count';
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MemberIndexer $indexer,
         private LoggerInterface $logger,
+        private CacheInterface $cacheMembers,
     ) {
     }
 
@@ -36,6 +41,7 @@ final readonly class MemberManager
         $this->entityManager->flush();
 
         $this->indexSafely($member);
+        $this->cacheMembers->delete(self::COUNT_CACHE_KEY);
 
         return $member;
     }
@@ -59,6 +65,8 @@ final readonly class MemberManager
         if (null !== $id) {
             $this->removeFromIndexSafely($id);
         }
+
+        $this->cacheMembers->delete(self::COUNT_CACHE_KEY);
     }
 
     /**

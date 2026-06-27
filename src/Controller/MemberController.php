@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 final class MemberController extends AbstractController
 {
@@ -22,6 +24,7 @@ final class MemberController extends AbstractController
     public function __construct(
         private readonly MemberRepository $members,
         private readonly MemberManager $memberManager,
+        private readonly CacheInterface $cacheMembers,
     ) {
     }
 
@@ -40,16 +43,24 @@ final class MemberController extends AbstractController
         }
 
         $page = $request->query->getInt('page', 1);
-        $paginator = $this->members->paginate($page, self::PER_PAGE);
-        $total = \count($paginator);
+        $total = $this->cachedTotal();
 
         return $this->render('member/index.html.twig', [
             'canView' => true,
-            'members' => $paginator,
+            'members' => $this->members->paginate($page, self::PER_PAGE),
             'currentPage' => max(1, $page),
             'pageCount' => max(1, (int) ceil($total / self::PER_PAGE)),
             'total' => $total,
         ]);
+    }
+
+    private function cachedTotal(): int
+    {
+        return $this->cacheMembers->get(MemberManager::COUNT_CACHE_KEY, function (ItemInterface $item): int {
+            $item->expiresAfter(3600);
+
+            return $this->members->countAll();
+        });
     }
 
     #[Route('/register', name: 'app_member_new', methods: ['GET', 'POST'])]
