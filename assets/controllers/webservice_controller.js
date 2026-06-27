@@ -15,7 +15,22 @@ export default class extends Controller {
         url.searchParams.set('siret', this.inputTarget.value);
 
         const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-        this.outputTarget.textContent = await response.text();
+        this.outputTarget.innerHTML = this.highlight(await response.text());
         this.resultTarget.hidden = false;
+    }
+
+    highlight(xml) {
+        const escaped = xml
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        return escaped.replace(/(&lt;[^&]*&gt;)|([^&]+)/g, (match, tag, text) => {
+            if (tag) {
+                return `<span class="xml-tag">${tag}</span>`;
+            }
+
+            return text.trim() ? `<span class="xml-text">${text}</span>` : match;
+        });
     }
 }

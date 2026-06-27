@@ -26,3 +26,12 @@
         appearance: none;
     }
 }
+
+/* Coloration syntaxique de la réponse XML du web service. */
+.xml-tag {
+    color: #2563eb;
+}
+
+.xml-text {
+    color: #b45309;
+}
