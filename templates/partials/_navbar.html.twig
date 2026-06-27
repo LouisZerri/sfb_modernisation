@@ -1,0 +1,48 @@
+<nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16 gap-4">
+            <a href="{{ app.user ? path('app_home') : path('app_login') }}" class="flex items-center gap-2 shrink-0">
+                <img src="{{ asset('images/logo.png') }}" alt="SFB" class="h-9 w-9 object-contain">
+                <span class="font-semibold text-sfb-green text-lg leading-none">
+                    <span class="text-sfb-grey">S</span>yndicat de la
+                    <span class="text-sfb-grey">F</span>ilière
+                    <span class="text-sfb-grey">B</span>ois
+                </span>
+            </a>
+
+            <ul class="flex items-center gap-1 text-sm font-medium">
+                {% if app.user %}
+                    {{ _self.link(path('app_home'), 'Accueil', app.current_route == 'app_home') }}
+                    {{ _self.link('https://www.sfbois.com/', 'Site officiel', false, true) }}
+                    {{ _self.link(path('app_member_new'), 'Ajouter', app.current_route == 'app_member_new') }}
+                    {{ _self.link(path('app_member_filter'), 'Filtrer', app.current_route == 'app_member_filter') }}
+                    {{ _self.link(path('app_webservice'), 'Web Service', app.current_route == 'app_webservice') }}
+                    <li>
+                        <a href="{{ path('app_logout') }}" data-turbo-prefetch="false"
+                           class="ml-2 inline-flex items-center rounded-md bg-red-50 px-3 py-2 text-red-600 hover:bg-red-600 hover:text-white transition-colors">
+                            Déconnexion
+                        </a>
+                    </li>
+                {% else %}
+                    {{ _self.link('https://www.sfbois.com/', 'Site officiel', false, true) }}
+                    <li>
+                        <a href="{{ path('app_login') }}"
+                           class="ml-2 inline-flex items-center rounded-md bg-sfb-green px-3 py-2 text-white hover:bg-sfb-green-dark transition-colors">
+                            Se connecter
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% macro link(href, label, active, external = false) %}
+    <li>
+        <a href="{{ href }}"{% if external %} target="_blank" rel="noopener"{% endif %}
+           class="inline-flex items-center rounded-md px-3 py-2 transition-colors
+                  {{ active ? 'bg-sfb-green/10 text-sfb-green' : 'text-sfb-grey hover:bg-gray-100' }}">
+            {{ label }}
+        </a>
+    </li>
+{% endmacro %}

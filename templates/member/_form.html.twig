@@ -1,0 +1,36 @@
+{{ form_start(form) }}
+    <div class="grid gap-8 md:grid-cols-2">
+        <section>
+            <h2 class="mb-4 text-lg font-semibold text-sfb-green border-b border-gray-200 pb-2">Représentant</h2>
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.email) }}
+        </section>
+
+        <section>
+            <h2 class="mb-4 text-lg font-semibold text-sfb-green border-b border-gray-200 pb-2">Entreprise</h2>
+            {{ form_row(form.company) }}
+            {{ form_row(form.address) }}
+            <div class="grid grid-cols-2 gap-4">
+                {{ form_row(form.postalCode) }}
+                {{ form_row(form.city) }}
+            </div>
+            {{ form_row(form.phone) }}
+            {{ form_row(form.siret) }}
+
+            <div data-controller="bulletin">
+                {{ form_row(form.received, { attr: { 'data-bulletin-target': 'checkbox', 'data-action': 'change->bulletin#toggle' } }) }}
+                <div data-bulletin-target="date">
+                    {{ form_row(form.returnedAt) }}
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="mt-6 flex items-center gap-3">
+        <button type="submit" class="rounded-md bg-sfb-green px-5 py-2.5 text-white font-medium hover:bg-sfb-green-dark transition-colors">
+            {{ submit_label }}
+        </button>
+        <a href="{{ path('app_home') }}" class="rounded-md px-4 py-2.5 text-sfb-grey hover:bg-gray-100">Annuler</a>
+    </div>
+{{ form_end(form) }}

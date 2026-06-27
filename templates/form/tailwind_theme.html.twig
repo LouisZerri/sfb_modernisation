@@ -1,0 +1,57 @@
+{# Thème de formulaire Tailwind partagé : erreurs sous l'input en rouge, bordure rouge si invalide. #}
+{% use 'form_div_layout.html.twig' %}
+
+{%- block form_row -%}
+    <div class="mb-4">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+        {{- form_help(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block form_label -%}
+    {%- if label is not same as(false) -%}
+        <label for="{{ id }}" class="block text-sm font-medium text-sfb-grey mb-1">
+            {{- label|default(name|humanize) -}}
+        </label>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{%- block form_widget_simple -%}
+    {%- set base = 'w-full rounded-md border px-3 py-2 outline-none transition-colors' -%}
+    {%- set state = valid
+        ? 'border-gray-300 focus:border-sfb-green focus:ring-1 focus:ring-sfb-green'
+        : 'border-red-400 ring-1 ring-red-400 focus:border-red-500' -%}
+    {%- set attr = attr|merge({ class: (attr.class|default('') ~ ' ' ~ base ~ ' ' ~ state)|trim }) -%}
+    {{- parent() -}}
+{%- endblock form_widget_simple -%}
+
+{%- block checkbox_widget -%}
+    {%- set attr = attr|merge({ class: (attr.class|default('') ~ ' h-4 w-4 rounded border-gray-300 text-sfb-green focus:ring-sfb-green')|trim }) -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
+
+{%- block checkbox_row -%}
+    <div class="mb-4 flex items-center gap-2">
+        {{- form_widget(form) -}}
+        {{- form_label(form, null, { label_attr: { class: 'text-sm font-medium text-sfb-grey mb-0' } }) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="mt-1 space-y-0.5">
+            {%- for error in errors -%}
+                <li class="text-xs text-red-600">{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}
+        <p class="mt-1 text-xs text-gray-500">{{ help|trans({}, translation_domain) }}</p>
+    {%- endif -%}
+{%- endblock form_help -%}

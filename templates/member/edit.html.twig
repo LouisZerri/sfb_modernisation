@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un adhérent — SFB{% endblock %}
+
+{% block body %}
+    <div class="mx-auto max-w-3xl">
+        <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div class="border-b border-gray-200 px-6 py-4">
+                <h1 class="text-xl font-semibold text-sfb-grey">Modifier&nbsp;: {{ member.company }}</h1>
+            </div>
+            <div class="px-6 py-6">
+                {% include 'member/_form.html.twig' with { submit_label: 'Enregistrer les modifications' } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

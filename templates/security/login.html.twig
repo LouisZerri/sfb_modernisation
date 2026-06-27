@@ -1,38 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion — SFB{% endblock %}
 
 {% block body %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+    <div class="max-w-md mx-auto mt-8">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+            <div class="bg-sfb-green px-6 py-5 text-center">
+                <img src="{{ asset('images/page.png') }}" alt="SFB" class="h-16 mx-auto object-contain">
+                <h1 class="mt-3 text-white text-xl font-semibold">Connectez-vous</h1>
             </div>
-        {% endif %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Password</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            <form method="post" class="px-6 py-6 space-y-4">
+                {% if error %}
+                    <div class="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
 
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
+                <div>
+                    <label for="username" class="block text-sm font-medium text-sfb-grey mb-1">Email</label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="username"
+                           autocomplete="email" required autofocus
+                           class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sfb-green focus:ring-1 focus:ring-sfb-green outline-none">
+                </div>
 
-            <div class="checkbox mb-3">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
-            </div>
-        #}
+                <div>
+                    <label for="password" class="block text-sm font-medium text-sfb-grey mb-1">Mot de passe</label>
+                    <input type="password" name="_password" id="password"
+                           autocomplete="current-password" required
+                           class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sfb-green focus:ring-1 focus:ring-sfb-green outline-none">
+                </div>
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
-    </form>
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit"
+                        class="w-full rounded-md bg-sfb-green px-4 py-2.5 text-white font-medium hover:bg-sfb-green-dark transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-sfb-green focus:ring-offset-1">
+                    Me connecter
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            <p class="font-medium">Compte de démonstration</p>
+            <p class="mt-1 font-mono text-xs">demo@sfbois.com · demo</p>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto mt-10">
+        {% include 'partials/_demo_notice.html.twig' %}
+    </div>
 {% endblock %}

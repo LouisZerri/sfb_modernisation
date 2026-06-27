@@ -1,3 +1,21 @@
-body {
-    background-color: lightgray;
+@import "tailwindcss";
+
+/* Exclut les assets compilés du scan des classes utilitaires. */
+@source not "../../public";
+
+/* Charte SFB — Syndicat de la Filière Bois. */
+@theme {
+    --color-sfb-green: #689e75;
+    --color-sfb-green-dark: #557f60;
+    --color-sfb-grey: #716f70;
+    --color-sfb-cream: #f5f3ee;
+}
+
+/* Tailwind v4 force cursor:default sur les boutons : on rétablit le pointeur. */
+@layer base {
+    button:not(:disabled),
+    [role="button"]:not(:disabled),
+    label[for] {
+        cursor: pointer;
+    }
 }

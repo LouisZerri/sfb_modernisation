@@ -1,0 +1,41 @@
+{# Fenêtre de pages autour de la page courante pour éviter une barre interminable. #}
+{% set window = 2 %}
+{% set from = max(1, currentPage - window) %}
+{% set to = min(pageCount, currentPage + window) %}
+
+<nav class="mt-6 flex justify-center" aria-label="Pagination">
+    <ul class="inline-flex items-center gap-1 text-sm">
+        {% if currentPage > 1 %}
+            <li>
+                <a href="{{ path('app_home', { page: currentPage - 1 }) }}"
+                   class="rounded-md px-3 py-2 text-sfb-grey hover:bg-gray-100">‹</a>
+            </li>
+        {% endif %}
+
+        {% if from > 1 %}
+            <li><a href="{{ path('app_home', { page: 1 }) }}" class="rounded-md px-3 py-2 text-sfb-grey hover:bg-gray-100">1</a></li>
+            {% if from > 2 %}<li class="px-2 text-gray-400">…</li>{% endif %}
+        {% endif %}
+
+        {% for page in from..to %}
+            <li>
+                <a href="{{ path('app_home', { page: page }) }}"
+                   class="rounded-md px-3 py-2 {{ page == currentPage ? 'bg-sfb-green text-white' : 'text-sfb-grey hover:bg-gray-100' }}">
+                    {{ page }}
+                </a>
+            </li>
+        {% endfor %}
+
+        {% if to < pageCount %}
+            {% if to < pageCount - 1 %}<li class="px-2 text-gray-400">…</li>{% endif %}
+            <li><a href="{{ path('app_home', { page: pageCount }) }}" class="rounded-md px-3 py-2 text-sfb-grey hover:bg-gray-100">{{ pageCount }}</a></li>
+        {% endif %}
+
+        {% if currentPage < pageCount %}
+            <li>
+                <a href="{{ path('app_home', { page: currentPage + 1 }) }}"
+                   class="rounded-md px-3 py-2 text-sfb-grey hover:bg-gray-100">›</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

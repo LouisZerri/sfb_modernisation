@@ -38,8 +38,8 @@ class Member
     #[ORM\Column(length: 255)]
     private ?string $siret = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $returnedForm = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $returnedAt = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -122,16 +122,21 @@ class Member
         return $this;
     }
 
-    public function getReturnedForm(): ?string
+    public function getReturnedAt(): ?\DateTimeImmutable
     {
-        return $this->returnedForm;
+        return $this->returnedAt;
     }
 
-    public function setReturnedForm(?string $returnedForm): static
+    public function setReturnedAt(?\DateTimeImmutable $returnedAt): static
     {
-        $this->returnedForm = $returnedForm;
+        $this->returnedAt = $returnedAt;
 
         return $this;
+    }
+
+    public function isReturned(): bool
+    {
+        return null !== $this->returnedAt;
     }
 
     public function getRepresentative(): ?Representative

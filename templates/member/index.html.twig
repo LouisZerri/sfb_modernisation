@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil — Adhérents SFB{% endblock %}
+
+{% block body %}
+    {% include 'partials/_demo_notice.html.twig' %}
+
+    {% if not canView %}
+        <div class="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            Vous n'avez pas les droits pour visualiser la base de données.
+        </div>
+    {% else %}
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-2xl font-semibold text-sfb-grey">Adhérents</h1>
+            <span class="text-sm text-gray-500">{{ total }} adhérent{{ total > 1 ? 's' : '' }}</span>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-sfb-green/10 text-sfb-grey">
+                    <tr>
+                        {% for col in ['Entreprise', 'Contact', 'Email', 'Téléphone', 'Adresse', 'CP', 'Ville', 'SIRET', 'Bulletin', 'Actions'] %}
+                            <th scope="col" class="px-3 py-2.5 text-left font-semibold whitespace-nowrap">{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for member in members %}
+                        {% set representative = member.representative %}
+                        <tr class="hover:bg-sfb-green/5">
+                            <td class="px-3 py-2 font-medium text-sfb-grey">{{ member.company }}</td>
+                            <td class="px-3 py-2 whitespace-nowrap">{{ representative.fullName }}</td>
+                            <td class="px-3 py-2">{{ representative.email }}</td>
+                            <td class="px-3 py-2 whitespace-nowrap">{{ member.phone }}</td>
+                            <td class="px-3 py-2">{{ member.address }}</td>
+                            <td class="px-3 py-2 whitespace-nowrap">{{ member.postalCode }}</td>
+                            <td class="px-3 py-2">{{ member.city }}</td>
+                            <td class="px-3 py-2 whitespace-nowrap">{{ member.siret }}</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                {% if member.returned %}
+                                    <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
+                                        Reçu le {{ member.returnedAt|date('d/m/Y') }}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                                        Pas encore reçu
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                {% include 'member/_actions.html.twig' with { member: member } %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="10" class="px-3 py-6 text-center text-gray-500">Aucun adhérent.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pageCount > 1 %}
+            {% include 'partials/_pagination.html.twig' with { currentPage: currentPage, pageCount: pageCount } %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
