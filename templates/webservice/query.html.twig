@@ -3,8 +3,31 @@
 {% block title %}Web Service — SFB{% endblock %}
 
 {% block body %}
-    <h1 class="text-2xl font-semibold text-sfb-grey mb-4">Interroger le Web Service</h1>
-    <div class="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-        L'interrogation par SIRET (réponse XML) sera disponible prochainement.
+    <div class="mx-auto max-w-3xl">
+        <h1 class="text-2xl font-semibold text-sfb-grey mb-2">Interroger le Web Service</h1>
+        <p class="text-sm text-gray-500 mb-4">
+            Saisissez un numéro SIRET pour interroger le service. La réponse est renvoyée au format XML
+            (entreprise et représentant si l'adhérent existe, sinon <code>Response = False</code>).
+        </p>
+
+        <div data-controller="webservice" data-webservice-url-value="{{ path('app_webservice_lookup') }}">
+            <form data-action="webservice#lookup" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <input type="text"
+                       data-webservice-target="input"
+                       inputmode="numeric"
+                       placeholder="Ex. : 41508409400028"
+                       class="flex-1 rounded-md border border-gray-300 px-4 py-2.5 outline-none focus:border-sfb-green focus:ring-1 focus:ring-sfb-green">
+                <button type="submit"
+                        class="rounded-md bg-sfb-green px-5 py-2.5 text-white font-medium hover:bg-sfb-green-dark transition-colors">
+                    Interroger
+                </button>
+            </form>
+
+            <div data-webservice-target="result" hidden class="mt-4">
+                <p class="text-xs font-medium text-gray-500 mb-1">Réponse XML</p>
+                <pre data-webservice-target="output"
+                     class="overflow-x-auto rounded-md border border-gray-200 bg-gray-50 p-4 text-xs text-gray-800"></pre>
+            </div>
+        </div>
     </div>
 {% endblock %}

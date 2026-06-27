@@ -54,6 +54,17 @@ class MemberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findOneBySiret(string $siret): ?Member
+    {
+        return $this->createQueryBuilder('m')
+            ->addSelect('r')
+            ->join('m.representative', 'r')
+            ->andWhere('m.siret = :siret')
+            ->setParameter('siret', $siret)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function countAll(): int
     {
         return (int) $this->createQueryBuilder('m')
