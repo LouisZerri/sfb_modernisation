@@ -21,36 +21,36 @@ class Member
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $company = null;
+    private string $company;
 
     #[ORM\Column(length: 255)]
-    private ?string $address = null;
+    private string $address;
 
     #[ORM\Column(length: 10)]
-    private ?string $postalCode = null;
+    private string $postalCode;
 
     #[ORM\Column(length: 100)]
-    private ?string $city = null;
+    private string $city;
 
     #[ORM\Column(length: 100)]
-    private ?string $phone = null;
+    private string $phone;
 
     #[ORM\Column(length: 255)]
-    private ?string $siret = null;
+    private string $siret;
 
     #[ORM\Column(type: 'date_immutable', nullable: true)]
     private ?\DateTimeImmutable $returnedAt = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Representative $representative = null;
+    private Representative $representative;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCompany(): ?string
+    public function getCompany(): string
     {
         return $this->company;
     }
@@ -62,7 +62,7 @@ class Member
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getAddress(): string
     {
         return $this->address;
     }
@@ -74,7 +74,7 @@ class Member
         return $this;
     }
 
-    public function getPostalCode(): ?string
+    public function getPostalCode(): string
     {
         return $this->postalCode;
     }
@@ -86,7 +86,7 @@ class Member
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCity(): string
     {
         return $this->city;
     }
@@ -98,7 +98,7 @@ class Member
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getPhone(): string
     {
         return $this->phone;
     }
@@ -110,7 +110,7 @@ class Member
         return $this;
     }
 
-    public function getSiret(): ?string
+    public function getSiret(): string
     {
         return $this->siret;
     }
@@ -139,7 +139,7 @@ class Member
         return null !== $this->returnedAt;
     }
 
-    public function getRepresentative(): ?Representative
+    public function getRepresentative(): Representative
     {
         return $this->representative;
     }

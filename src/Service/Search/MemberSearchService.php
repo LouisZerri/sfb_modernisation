@@ -7,6 +7,7 @@ namespace App\Service\Search;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 
 /**
  * Recherche d'adhérents via Elasticsearch (entreprise, contact, ville, SIRET…).
@@ -39,7 +40,28 @@ final readonly class MemberSearchService
             return [];
         }
 
-        return $this->hydrate($response['hits']['hits'] ?? []);
+        if (!$response instanceof Elasticsearch) {
+            return [];
+        }
+
+        return $this->hydrate($this->extractHits($response->asArray()));
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return list<mixed>
+     */
+    private function extractHits(array $body): array
+    {
+        $hits = $body['hits'] ?? null;
+        if (!\is_array($hits)) {
+            return [];
+        }
+
+        $rows = $hits['hits'] ?? null;
+
+        return \is_array($rows) ? array_values($rows) : [];
     }
 
     /**
@@ -61,7 +83,7 @@ final readonly class MemberSearchService
     }
 
     /**
-     * @param list<array<string, mixed>> $hits
+     * @param list<mixed> $hits
      *
      * @return list<array{id: int, company: string, representativeFullName: string, representativeEmail: string, city: string, postalCode: string, siret: string, returned: bool, returnedAt: ?string}>
      */
@@ -70,17 +92,23 @@ final readonly class MemberSearchService
         $results = [];
 
         foreach ($hits as $hit) {
+            if (!\is_array($hit) || !\is_array($hit['_source'] ?? null)) {
+                continue;
+            }
+
             $source = $hit['_source'];
+            $returnedAt = $source['returnedAt'] ?? null;
+
             $results[] = [
-                'id' => (int) $hit['_id'],
-                'company' => $source['company'] ?? '',
-                'representativeFullName' => $source['representativeFullName'] ?? '',
-                'representativeEmail' => $source['representativeEmail'] ?? '',
-                'city' => $source['city'] ?? '',
-                'postalCode' => $source['postalCode'] ?? '',
-                'siret' => $source['siret'] ?? '',
+                'id' => (int) ($hit['_id'] ?? 0),
+                'company' => (string) ($source['company'] ?? ''),
+                'representativeFullName' => (string) ($source['representativeFullName'] ?? ''),
+                'representativeEmail' => (string) ($source['representativeEmail'] ?? ''),
+                'city' => (string) ($source['city'] ?? ''),
+                'postalCode' => (string) ($source['postalCode'] ?? ''),
+                'siret' => (string) ($source['siret'] ?? ''),
                 'returned' => (bool) ($source['returned'] ?? false),
-                'returnedAt' => $source['returnedAt'] ?? null,
+                'returnedAt' => null !== $returnedAt ? (string) $returnedAt : null,
             ];
         }
 

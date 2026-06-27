@@ -17,20 +17,20 @@ class Representative
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $firstName = null;
+    private string $firstName;
 
     #[ORM\Column(length: 100)]
-    private ?string $lastName = null;
+    private string $lastName;
 
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    private string $email;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
@@ -42,7 +42,7 @@ class Representative
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastName(): string
     {
         return $this->lastName;
     }
@@ -54,7 +54,7 @@ class Representative
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -68,6 +68,6 @@ class Representative
 
     public function getFullName(): string
     {
-        return trim(($this->firstName ?? '').' '.($this->lastName ?? ''));
+        return trim($this->firstName.' '.$this->lastName);
     }
 }

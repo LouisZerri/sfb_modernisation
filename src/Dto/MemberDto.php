@@ -70,9 +70,9 @@ final class MemberDto
         $dto = new self();
         $representative = $member->getRepresentative();
 
-        $dto->lastName = $representative?->getLastName();
-        $dto->firstName = $representative?->getFirstName();
-        $dto->email = $representative?->getEmail();
+        $dto->lastName = $representative->getLastName();
+        $dto->firstName = $representative->getFirstName();
+        $dto->email = $representative->getEmail();
         $dto->company = $member->getCompany();
         $dto->address = $member->getAddress();
         $dto->postalCode = $member->getPostalCode();

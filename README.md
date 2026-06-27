@@ -73,7 +73,7 @@ Prérequis : Docker, PHP 8.4, Composer, Node.js.
 composer install
 npm install
 
-# 2. Services (MySQL, Elasticsearch, Redis, Mailpit)
+# 2. Services (MySQL, Elasticsearch, Redis)
 docker compose up -d
 
 # 3. Schéma de base de données
