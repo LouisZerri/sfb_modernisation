@@ -102,7 +102,7 @@ final readonly class MemberIndexer
             $operations[] = ['index' => ['_index' => self::INDEX, '_id' => (string) $member->getId()]];
             $operations[] = $this->toDocument($member);
 
-            if (++$count % 1000 === 0) {
+            if (0 === ++$count % 1000) {
                 $this->client->bulk(['body' => $operations]);
                 $operations = [];
             }

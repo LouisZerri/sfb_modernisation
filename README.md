@@ -105,11 +105,19 @@ L'application est disponible sur http://127.0.0.1:8000.
 
 ## Réinitialisation automatique (production de la démo)
 
-Réinitialisation nocturne via cron (4h00, avec verrou anti-chevauchement) :
+Réinitialisation nocturne via cron (4h00, dans le conteneur applicatif, avec verrou anti-chevauchement) :
 
 ```cron
-0 4 * * * /usr/bin/flock -n /tmp/sfb-demo-reset.lock -c 'cd /chemin/vers/new_sfb && /usr/bin/php bin/console app:demo:reset --env=prod >> var/log/demo-reset.log 2>&1'
+0 4 * * * /usr/bin/flock -n /tmp/sfb-demo-reset.lock -c 'cd /var/www/sfb && docker compose -f compose.prod.yaml --env-file .env.prod run --rm app php bin/console app:demo:reset >> /var/log/sfb-demo-reset.log 2>&1'
 ```
+
+## Déploiement (CI/CD)
+
+Déploiement continu via **Jenkins** : à chaque push sur `main`, le pipeline (`Jenkinsfile`)
+exécute la qualité (PHPStan + php-cs-fixer) puis déploie par SSH sur le VPS de production —
+build de l'image Docker (`compose.prod.yaml`), migrations et réinitialisation des données.
+L'application FrankenPHP est servie derrière Apache (TLS Let's Encrypt) sur
+**https://sfb.lzerri-project.fr**.
 
 ## Qualité
 

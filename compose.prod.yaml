@@ -1,0 +1,83 @@
+# Orchestration de PRODUCTION de SFB.
+#
+# Déploiement :
+#   cp .env.prod.dist .env.prod   # puis renseigner les secrets
+#   docker compose -f compose.prod.yaml --env-file .env.prod up -d --build
+#   docker compose -f compose.prod.yaml --env-file .env.prod run --rm app php bin/console doctrine:migrations:migrate --no-interaction
+#
+# L'app FrankenPHP n'est exposée qu'en local (127.0.0.1:8083) ; Apache proxie
+# sfb.lzerri-project.fr + TLS. MySQL, Elasticsearch et Redis tournent en conteneurs.
+
+x-app-env: &app-env
+  APP_ENV: prod
+  APP_SECRET: ${APP_SECRET}
+  DATABASE_URL: "mysql://sfb:${MYSQL_PASSWORD}@database:3306/sfb?serverVersion=8.0&charset=utf8mb4"
+  ELASTICSEARCH_URL: "http://elasticsearch:9200"
+  REDIS_URL: "redis://redis:6379"
+  MAILER_DSN: ${MAILER_DSN:-null://null}
+
+services:
+  app:
+    build:
+      context: .
+    image: sfb/app:latest
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+    ports:
+      - "127.0.0.1:8083:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  database:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sfb
+      MYSQL_USER: sfb
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  elasticsearch:
+    image: elasticsearch:8.15.3
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:
+  es_data:
+  redis_data:

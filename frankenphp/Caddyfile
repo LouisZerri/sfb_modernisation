@@ -1,0 +1,23 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+# SERVER_NAME=:8080 en prod → FrankenPHP sert en HTTP sur 8080, derrière Apache
+# qui termine le TLS. En local on peut surcharger SERVER_NAME pour activer l'HTTPS auto.
+{$SERVER_NAME:localhost} {
+	log {
+		output stderr
+	}
+
+	root * /app/public
+	encode zstd br gzip
+
+	# Sert l'application Symfony (public/index.php)
+	php_server
+}

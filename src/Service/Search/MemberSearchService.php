@@ -36,7 +36,7 @@ final readonly class MemberSearchService
                     'sort' => '' === $query ? [['company.keyword' => 'asc']] : ['_score'],
                 ],
             ]);
-        } catch (ClientResponseException | ServerResponseException) {
+        } catch (ClientResponseException|ServerResponseException) {
             return [];
         }
 
