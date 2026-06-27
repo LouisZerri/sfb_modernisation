@@ -1,0 +1,46 @@
+{% if term is empty %}
+    <p class="text-sm text-gray-500">Commencez à taper pour rechercher parmi les adhérents.</p>
+{% elseif results is empty %}
+    <p class="text-sm text-gray-500">Aucun adhérent ne correspond à « {{ term }} ».</p>
+{% else %}
+    <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-sfb-green/10 text-sfb-grey">
+                <tr>
+                    {% for col in ['Entreprise', 'Contact', 'Email', 'Ville', 'SIRET', 'Bulletin', 'Actions'] %}
+                        <th scope="col" class="px-3 py-2.5 text-left font-semibold whitespace-nowrap">{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for row in results %}
+                    <tr class="hover:bg-sfb-green/5">
+                        <td class="px-3 py-2 font-medium text-sfb-grey">{{ row.company }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">{{ row.representativeFullName }}</td>
+                        <td class="px-3 py-2">{{ row.representativeEmail }}</td>
+                        <td class="px-3 py-2">{{ row.city }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">{{ row.siret }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if row.returned %}
+                                <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
+                                    Reçu{% if row.returnedAt %} le {{ row.returnedAt|date('d/m/Y') }}{% endif %}
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">Pas encore reçu</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <a href="{{ path('app_member_edit', { id: row.id }) }}"
+                               class="text-sfb-grey hover:text-sfb-green" title="Modifier" aria-label="Modifier">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="mt-2 text-xs text-gray-400">{{ results|length }} résultat{{ results|length > 1 ? 's' : '' }} (max 50).</p>
+{% endif %}

@@ -4,7 +4,22 @@
 
 {% block body %}
     <h1 class="text-2xl font-semibold text-sfb-grey mb-4">Filtrer les adhérents</h1>
-    <div class="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-        La recherche instantanée (Elasticsearch) sera disponible prochainement.
+
+    <div data-controller="search"
+         data-search-url-value="{{ path('app_member_search') }}">
+        <div class="relative max-w-xl">
+            <input type="search"
+                   data-search-target="input"
+                   data-action="input->search#query"
+                   placeholder="Entreprise, contact, ville, SIRET…"
+                   autocomplete="off"
+                   class="w-full rounded-md border border-gray-300 px-4 py-2.5 pr-10 outline-none focus:border-sfb-green focus:ring-1 focus:ring-sfb-green">
+            <span data-search-target="spinner" hidden
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">…</span>
+        </div>
+
+        <div data-search-target="results" class="mt-4">
+            {% include 'search/_results.html.twig' with { results: [], term: '' } %}
+        </div>
     </div>
 {% endblock %}

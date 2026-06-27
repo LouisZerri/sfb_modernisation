@@ -40,6 +40,20 @@ class MemberRepository extends ServiceEntityRepository
         return new Paginator($query, fetchJoinCollection: false);
     }
 
+    /**
+     * Tous les adhérents avec leur représentant joint, pour l'indexation Elasticsearch.
+     *
+     * @return list<Member>
+     */
+    public function findAllForIndexing(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->addSelect('r')
+            ->join('m.representative', 'r')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function countAll(): int
     {
         return (int) $this->createQueryBuilder('m')
